@@ -2,7 +2,7 @@
   "name": "NOTACO",
   "short_name": "NOTACO",
   "description": "自律应用",
-  "start_url": "/",
+  "start_url": "/notaco/",
   "display": "standalone",
   "background_color": "#ececf1",
   "theme_color": "#2d2d32",

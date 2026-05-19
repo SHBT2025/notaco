@@ -851,6 +851,14 @@ body::after{
     <div class="modal-title">使用帮助</div>
     <div style="font-size:13px;line-height:1.7;color:#333;">
       
+      <!-- PWA 说明 -->
+      <div style="background:#f0f7ff;padding:14px;border-radius:12px;margin-bottom:16px;">
+        <div style="font-weight:800;color:#1a73e8;margin-bottom:8px;">🚀 关于 NOTACO</div>
+        <p style="color:#555;font-size:12px;line-height:1.6;">NOTACO 是一款基于 PWA（渐进式网页应用）技术开发的轻量化时间记录工具。</p>
+        <p style="color:#555;font-size:12px;line-height:1.6;margin-top:6px;">不同于传统需要下载安装的 App，PWA 可以直接通过浏览器访问，打开即可使用。添加至手机桌面后，使用体验与原生 App 无异——拥有独立的图标、全屏运行、不显示浏览器地址栏。</p>
+        <p style="color:#555;font-size:12px;line-height:1.6;margin-top:6px;">✅ 无需应用商店，无需下载更新，不占用手机内存，随时打开随时用。</p>
+      </div>
+      
       <p style="margin-bottom:10px;"><strong>📱 离线使用（安卓）：</strong></p>
       <p style="margin-bottom:12px;color:#666;">1. 点击「保存到本地」按钮<br>2. 下载完成后用浏览器打开<br>3. 点击浏览器菜单 → 添加到主屏幕</p>
       
@@ -864,9 +872,8 @@ body::after{
       <p style="margin-bottom:12px;color:#666;">每个时间记录右上角有一个小小的「×」按钮，<br>点击即可删除该条记录。</p>
       
       <p style="margin-bottom:10px;"><strong>📊 如何显示记录：</strong></p>
-      <p style="margin-bottom:12px;color:#666;">点击「选择日期」展开日历，<br>选择某一天后会显示前后有记录的日子，<br>最多显示3列。有记录的日期会显示红点标记。</p>
+      <p style="color:#666;">点击「选择日期」展开日历，<br>选择某一天后会显示前后有记录的日子，<br>最多显示3列。有记录的日期会显示红点标记。</p>
       
-      <p style="color:#999;font-size:12px;">💡 保存后即可离线使用，无需网络！</p>
     </div>
     <button class="modal-btn" onclick="document.getElementById('helpModal').style.display='none'">
       我知道了
@@ -1978,191 +1985,6 @@ loadData().then(()=>{
 });
 
 </script>
-
-
-<style>
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-}
-
-.inland-security-footer {
-  position: fixed;
-  z-index: 10;
-  bottom: 0;
-  right: 0;
-  width: fit-content;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.tooltip-container {
-  position: relative;
-}
-
-.trigger-content {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  background-color: transparent;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.minimax-link {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  font-weight: 300;
-  color: #adadad;
-  text-decoration: none;
-}
-
-.minimax-link:visited {
-  color: #adadad;
-}
-
-.minimax-link:hover {
-  color: #666666;
-}
-
-.tooltip-content {
-  position: absolute;
-  bottom: 100%;
-  right: 0;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  padding-bottom: 16px;
-  font-size: 12px;
-  line-height: 17px;
-  background-color: #fafafa;
-  border-radius: 12px;
-  white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  color: #171717;
-}
-
-.tooltip-content::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 0;
-  right: 0;
-  height: 16px;
-}
-
-.tooltip-container:hover .tooltip-content {
-  display: flex;
-}
-
-.info-section {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-}
-
-.beian-link {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: #171717;
-}
-
-.beian-icon {
-  width: 14px;
-  height: 14px;
-  margin-right: 2px;
-}
-
-.underline-text {
-  color: #171717;
-  text-decoration: underline;
-}
-
-.underline-text:hover {
-  color: #000000;
-}
-
-@media (prefers-color-scheme: dark) {
-  .trigger-content {
-    background-color: transparent;
-  }
-
-  .minimax-link,
-  .minimax-link:visited {
-    color: #666666;
-  }
-
-  .minimax-link:hover {
-    color: #adadad;
-  }
-
-  .tooltip-content {
-    background-color: #262626;
-    color: #ededed;
-  }
-
-  .beian-link,
-  .underline-text {
-    color: #ededed;
-  }
-
-  .underline-text:hover {
-    color: #ffffff;
-  }
-}
-
-</style>
-<div class="inland-security-footer">
-  <div class="tooltip-container">
-    <div class="trigger-content">
-      <a href="https://www.minimaxi.com/" target="_blank" rel="noreferrer" class="minimax-link">
-        <span>© 2026 MiniMax</span>
-      </a>
-    </div>
-    <div class="tooltip-content">
-      <section class="info-section">
-        <span>上海稀宇科技有限公司</span>
-      </section>
-
-      <section class="info-section">
-        <a class="beian-link" href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31010402010179" target="_blank" rel="noreferrer">
-          <img alt="hailuo-beian-icon" src="https://cdn.hailuoai.com/hailuo-video-web/public_assets/223037d3-79fd-4db0-a456-749f38a6a14b.png" class="beian-icon">
-          <span class="underline-text">沪公网安备31010402010179号</span>
-        </a>
-        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer" class="underline-text">
-          沪ICP备2023003282号-38
-        </a>
-      </section>
-
-      <section class="info-section">
-        <span>模型名称：MiniMax</span>
-        <span>备案号：Shanghai-MiniMax-202505230046</span>
-      </section>
-
-      <section class="info-section">
-        <a href="https://agent.minimaxi.com/doc/zh/terms-of-service.html" target="_blank" rel="noreferrer" class="underline-text">
-          用户协议
-        </a>
-        <a href="https://agent.minimaxi.com/doc/zh/privacy-policy.html" target="_blank" rel="noreferrer" class="underline-text">
-          隐私政策
-        </a>
-      </section>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>
