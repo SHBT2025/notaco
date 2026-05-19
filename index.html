@@ -1,0 +1,2168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NOTACO</title>
+
+<!-- 浏览器标签页图标 -->
+<link rel="icon" type="image/png" href="192.png" sizes="192x192">
+<link rel="shortcut icon" type="image/png" href="192.png">
+
+<!-- iOS 主屏幕图标 -->
+<link rel="apple-touch-icon" href="512.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="NOTACO">
+
+<!-- Android 主屏幕图标 -->
+<link rel="manifest" href="manifest.json">
+
+<!-- Windows 磁贴 -->
+<meta name="msapplication-TileImage" content="512.png">
+<meta name="msapplication-TileColor" content="#2d2d32">
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:#ececf1;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  display:flex;
+  justify-content:center;
+  color:#222;
+  min-height:100vh;
+  position:relative;
+}
+
+/* 背景图片 - 手机端铺满 */
+body::before{
+  content:"";
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background-image:url('12.png');
+  background-size:cover;
+  background-position:center top;
+  background-repeat:no-repeat;
+  z-index:-2;
+}
+
+/* 深色半透明遮罩 */
+body::after{
+  content:"";
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.25);
+  z-index:-1;
+}
+
+/* PC端固定480px宽度 */
+@media(min-width:481px){
+  body{
+    background:#1a1a1a;
+  }
+  body::before,
+  body::after{
+    width:480px;
+    height:852px;
+    left:50%;
+    top:0;
+    transform:translateX(-50%);
+    background-size:contain;
+  }
+}
+
+.app{
+  width:100%;
+  max-width:480px;
+  padding:14px;
+  position:relative;
+  z-index:1;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+  background:rgba(255,255,255,0.95);
+  padding:8px 12px;
+  border-radius:16px;
+}
+
+.logo-wrap{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo{
+  font-size:38px;
+  font-weight:900;
+  letter-spacing:-2px;
+  color:#2d2d32;
+}
+
+.setting-btn{
+  width:44px;
+  height:44px;
+  border:none;
+  border-radius:14px;
+  background:#d9d9de;
+  cursor:pointer;
+  font-size:20px;
+}
+
+.day-box{
+  background:#d9d9de;
+  border-radius:18px;
+  padding:6px 10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.day-btn{
+  width:30px;
+  height:30px;
+  border:none;
+  border-radius:10px;
+  font-size:20px;
+  cursor:pointer;
+  background:white;
+}
+
+.card{
+  background:rgba(247,247,248,0.65);
+  border-radius:24px;
+  padding:14px;
+  margin-bottom:16px;
+}
+
+.tabs{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding-bottom:8px;
+}
+
+.tab{
+  min-width:64px;
+  height:50px;
+  border:none;
+  border-radius:14px;
+  background:rgba(217,217,222,0.65);
+  color:#222;
+  cursor:pointer;
+  font-weight:700;
+  font-size:13px;
+  flex-shrink:0;
+  transition:0.15s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.tab.active{
+  background:rgba(45,45,50,0.65);
+  color:white;
+}
+
+.add-page{
+  width:50px;
+  min-width:50px;
+  font-size:22px;
+}
+
+.delete-page{
+  width:50px;
+  min-width:50px;
+  font-size:18px;
+  background:rgba(217,217,222,0.65);
+}
+
+.project-tools{
+  margin-bottom:14px;
+}
+
+.tool-btn{
+  height:36px;
+  padding:0 14px;
+  border:none;
+  border-radius:12px;
+  background:rgba(217,217,222,0.65);
+  color:#222;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.project-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+
+.project{
+  border:none;
+  border-radius:12px;
+  color:white;
+  font-size:12px;
+  font-weight:700;
+  padding:6px 8px;
+  cursor:pointer;
+  position:relative;
+  box-shadow:inset 0 -2px rgba(0,0,0,0.15);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  min-height:40px;
+  line-height:1.3;
+  word-break:break-word;
+}
+
+.del-project{
+  position:absolute;
+  top:-5px;
+  right:-5px;
+  width:18px;
+  height:18px;
+  border-radius:6px;
+  border:none;
+  background:white;
+  color:#333;
+  font-size:10px;
+  font-weight:900;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.timeline{
+  background:rgba(247,247,248,0.65);
+  border-radius:24px;
+  padding:18px;
+}
+
+.calendar-toggle{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:16px;
+  padding:8px 12px;
+  background:#ececf1;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:700;
+  color:#666;
+}
+
+.calendar-toggle:hover{
+  background:#ddd;
+}
+
+.calendar-arrow{
+  transition:transform 0.3s;
+}
+
+.calendar-arrow.open{
+  transform:rotate(180deg);
+}
+
+.calendar-panel{
+  display:none;
+  margin-bottom:16px;
+  padding:12px;
+  background:white;
+  border-radius:16px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.calendar-panel.show{
+  display:block;
+}
+
+.calendar-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+}
+
+.calendar-nav{
+  width:32px;
+  height:32px;
+  border:none;
+  border-radius:8px;
+  background:#f0f0f0;
+  cursor:pointer;
+  font-size:16px;
+}
+
+.calendar-title{
+  font-size:16px;
+  font-weight:700;
+}
+
+.calendar-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:4px;
+}
+
+.calendar-weekday{
+  text-align:center;
+  font-size:11px;
+  color:#999;
+  padding:4px;
+  font-weight:600;
+}
+
+.calendar-day{
+  aspect-ratio:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  border-radius:8px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.calendar-day:hover{
+  background:#f0f0f0;
+}
+
+.calendar-day.today{
+  border:2px solid #5b8bd9;
+}
+
+.calendar-day.selected{
+  background:#5b8bd9;
+  color:white;
+}
+
+/* 有记录的日期标记 - 半透明红色 */
+.calendar-day.has-record{
+  background:rgba(255, 107, 107, 0.25);
+  color:#d32f2f;
+  font-weight:700;
+}
+
+.calendar-day.has-record:hover{
+  background:rgba(255, 107, 107, 0.4);
+}
+
+.calendar-day.has-record.selected{
+  background:#5b8bd9;
+  color:white;
+}
+
+.calendar-day.empty{
+  cursor:default;
+}
+
+.calendar-day.empty:hover{
+  background:transparent;
+}
+
+.day-title{
+  font-size:22px;
+  font-weight:800;
+  margin-bottom:20px;
+  padding-bottom:8px;
+  border-bottom:2px solid #e4e4e4;
+}
+
+.day-section{
+  margin-bottom:24px;
+  flex:1;
+  min-width:0;
+}
+
+.day-section:last-child{
+  margin-bottom:0;
+}
+
+/* 固定3列布局 */
+.columns-container{
+  display:flex;
+  flex-wrap:nowrap;
+  gap:12px;
+  justify-content:space-between;
+}
+
+/* 固定3列 */
+.columns-container .day-section{
+  flex:1;
+  width:calc(33.33% - 8px);
+  min-width:0;
+}
+
+/* 隐藏超过3列的项目 */
+.columns-container .day-section:nth-child(4){
+  display:none;
+}
+
+.day-header{
+  font-size:14px;
+  font-weight:800;
+  margin-bottom:12px;
+  color:#333;
+  padding-bottom:6px;
+  border-bottom:2px solid #e4e4e4;
+  word-break:break-word;
+}
+
+.item{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  position:relative;
+  padding-bottom:16px;
+}
+
+.item::before{
+  content:"";
+  position:absolute;
+  left:8px;
+  top:22px;
+  width:2px;
+  height:calc(100% - 8px);
+  background:#ddd;
+}
+
+.item:last-child::before{
+  display:none;
+}
+
+.dot{
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  margin-top:3px;
+  flex-shrink:0;
+  border:2px solid white;
+  box-shadow:0 0 0 1.5px currentColor;
+}
+
+.content{
+  flex:1;
+  min-width:0;
+}
+
+.time-wrap{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:nowrap;
+}
+
+.time{
+  font-size:17px;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.tag-btn{
+  display:inline-block;
+  padding:3px 10px;
+  border-radius:8px;
+  color:white;
+  font-size:12px;
+  font-weight:700;
+  margin-top:4px;
+  box-shadow:inset 0 -2px rgba(0,0,0,0.15);
+  word-break:break-word;
+  line-height:1.4;
+}
+
+.gap{
+  margin:4px 0 14px 28px;
+  display:inline-block;
+  background:#ececf1;
+  color:#666;
+  padding:3px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:700;
+}
+
+/* 跨天间隔样式 */
+.gap-cross-day{
+  margin:4px 0 14px 28px;
+  display:inline-block;
+  background:#fff3e0;
+  color:#e65100;
+  padding:3px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:700;
+}
+
+.del-record{
+  width:18px;
+  height:18px;
+  border:none;
+  border-radius:5px;
+  background:transparent;
+  color:#ccc;
+  font-size:12px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:0.2s;
+  opacity:0.5;
+  flex-shrink:0;
+  padding:0;
+}
+
+.del-record:hover{
+  background:rgba(0,0,0,0.1);
+  color:#999;
+  opacity:1;
+}
+
+.cross-day{
+  margin:18px 0;
+  background:#fff0d9;
+  color:#a56500;
+  padding:10px 14px;
+  border-radius:14px;
+  font-weight:700;
+  text-align:center;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.45);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+
+.modal-box{
+  width:90%;
+  max-width:360px;
+  background:white;
+  border-radius:24px;
+  padding:20px;
+  max-height:90vh;
+  overflow-y:auto;
+}
+
+.modal-title{
+  font-size:24px;
+  font-weight:800;
+  margin-bottom:18px;
+}
+
+.modal-btn{
+  width:100%;
+  border:none;
+  padding:14px;
+  margin-bottom:12px;
+  border-radius:16px;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  background:rgba(217,217,222,0.65);
+}
+
+.modal-btn.primary{
+  background:#2d2d32;
+  color:white;
+}
+
+.modal-btn.secondary{
+  background:#5ca879;
+  color:white;
+}
+
+.color-picker{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin-top:14px;
+}
+
+.color-item{
+  width:100%;
+  aspect-ratio:1/1;
+  border-radius:14px;
+  cursor:pointer;
+  border:3px solid transparent;
+}
+
+.color-item.active{
+  border:3px solid #111;
+}
+
+.footer-space{
+  height:80px;
+}
+
+/* 离线状态提示 */
+.offline-banner{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  background:#ffa500;
+  color:white;
+  text-align:center;
+  padding:8px;
+  font-size:14px;
+  font-weight:700;
+  z-index:1000;
+  display:none;
+}
+
+.offline-banner.show{
+  display:block;
+}
+
+/* 缓存状态提示 */
+.cache-toast{
+  position:fixed;
+  bottom:100px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#2d2d32;
+  color:white;
+  padding:12px 24px;
+  border-radius:12px;
+  font-size:14px;
+  font-weight:700;
+  z-index:1001;
+  opacity:0;
+  transition:opacity 0.3s;
+}
+
+.cache-toast.show{
+  opacity:1;
+}
+
+/* 全部记录提示 */
+.all-records-hint{
+  text-align:center;
+  color:#999;
+  font-size:13px;
+  margin-bottom:12px;
+  padding:8px;
+  background:#f5f5f5;
+  border-radius:8px;
+}
+
+@media(max-width:480px){
+
+  .project-grid{
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+  }
+
+  .project{
+    min-height:36px;
+    font-size:11px;
+    padding:5px 6px;
+    border-radius:10px;
+  }
+
+  .time{
+    font-size:16px;
+  }
+  
+  .day-header{
+    font-size:13px;
+  }
+  
+  .columns-container{
+    gap:10px;
+  }
+  
+  .columns-container .day-section{
+    width:calc(33.33% - 7px);
+  }
+
+  .tag-btn{
+    font-size:11px;
+    padding:2px 8px;
+  }
+  
+  .gap, .gap-cross-day{
+    font-size:10px;
+    margin-left:26px;
+    padding:2px 8px;
+  }
+  
+  .item{
+    gap:8px;
+    padding-bottom:14px;
+  }
+  
+  .item::before{
+    left:7px;
+    top:20px;
+  }
+  
+  .dot{
+    width:14px;
+    height:14px;
+  }
+  
+  .del-record{
+    width:16px;
+    height:16px;
+    font-size:11px;
+  }
+  
+  .all-records-hint{
+    font-size:12px;
+  }
+  
+  .calendar-day.has-record{
+    background:rgba(255, 107, 107, 0.3);
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- 离线状态提示 -->
+<div class="offline-banner" id="offlineBanner">
+  📱 离线模式 - 应用已保存到本地，可正常使用
+</div>
+
+<!-- 缓存状态提示 -->
+<div class="cache-toast" id="cacheToast"></div>
+
+<div class="app">
+
+  <div class="header">
+
+    <div class="logo-wrap">
+      <div class="logo">NOTACO</div>
+
+      <button class="setting-btn" onclick="openSettings()">
+        ⚙️
+      </button>
+    </div>
+
+    <div class="day-box">
+
+      <button class="day-btn" onclick="changeDay(-1)">−</button>
+
+      <div>
+        <div style="font-size:12px;color:#666;">最近</div>
+        <div id="dayCount" style="font-weight:800;text-align:center;">7</div>
+      </div>
+
+      <button class="day-btn" onclick="changeDay(1)">+</button>
+
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <div class="tabs" id="tabs"></div>
+
+    <hr style="border:none;height:1px;background:#e4e4e4;margin:14px 0;">
+
+    <div class="project-tools">
+      <button class="tool-btn" onclick="addProject()">
+        + 标签
+      </button>
+    </div>
+
+    <div class="project-grid" id="projectGrid"></div>
+
+  </div>
+
+  <div class="timeline" id="timeline"></div>
+
+  <div class="footer-space"></div>
+
+</div>
+
+<!-- 设置弹窗 -->
+
+<div class="modal" id="modal">
+
+  <div class="modal-box">
+
+    <div class="modal-title">设置</div>
+
+    <!-- 保存到本地功能 -->
+    <button class="modal-btn primary" onclick="saveToLocal()">
+      📥 保存到本地（离线使用）
+    </button>
+
+    <hr style="border:none;height:1px;background:#e4e4e4;margin:14px 0;">
+
+    <button class="modal-btn" onclick="exportData()">
+      📤 导出数据
+    </button>
+
+    <button class="modal-btn"
+    onclick="document.getElementById('importFile').click()">
+      📥 导入数据
+    </button>
+
+    <hr style="border:none;height:1px;background:#e4e4e4;margin:14px 0;">
+
+    <button class="modal-btn" onclick="showOfflineHelp()">
+      ❓ 使用帮助
+    </button>
+
+    <button class="modal-btn" onclick="closeSettings()">
+      关闭
+    </button>
+
+    <input type="file" id="importFile" hidden />
+
+  </div>
+
+</div>
+
+<!-- 帮助弹窗 -->
+<div class="modal" id="helpModal">
+  <div class="modal-box">
+    <div class="modal-title">使用帮助</div>
+    <div style="font-size:13px;line-height:1.7;color:#333;">
+      
+      <p style="margin-bottom:10px;"><strong>📱 离线使用（安卓）：</strong></p>
+      <p style="margin-bottom:12px;color:#666;">1. 点击「保存到本地」按钮<br>2. 下载完成后用浏览器打开<br>3. 点击浏览器菜单 → 添加到主屏幕</p>
+      
+      <p style="margin-bottom:10px;"><strong>🍎 离线使用（iPhone）：</strong></p>
+      <p style="margin-bottom:12px;color:#666;">1. 点击「保存到本地」按钮<br>2. 用Safari打开下载的文件<br>3. 点击分享按钮 → 添加到主屏幕</p>
+      
+      <p style="margin-bottom:10px;"><strong>💻 离线使用（电脑）：</strong></p>
+      <p style="margin-bottom:12px;color:#666;">1. 点击「保存到本地」按钮<br>2. 下载后双击打开即可使用</p>
+      
+      <p style="margin-bottom:10px;"><strong>🗑️ 如何删除记录：</strong></p>
+      <p style="margin-bottom:12px;color:#666;">每个时间记录右上角有一个小小的「×」按钮，<br>点击即可删除该条记录。</p>
+      
+      <p style="margin-bottom:10px;"><strong>📊 如何显示记录：</strong></p>
+      <p style="margin-bottom:12px;color:#666;">点击「选择日期」展开日历，<br>选择某一天后会显示前后有记录的日子，<br>最多显示3列。有记录的日期会显示红点标记。</p>
+      
+      <p style="color:#999;font-size:12px;">💡 保存后即可离线使用，无需网络！</p>
+    </div>
+    <button class="modal-btn" onclick="document.getElementById('helpModal').style.display='none'">
+      我知道了
+    </button>
+  </div>
+</div>
+
+<script>
+
+const presetColors = [
+
+"#d96c6c",
+"#e28b52",
+"#d9b44a",
+"#a6b85c",
+
+"#5ca879",
+"#4ea5a5",
+"#5b8bd9",
+"#6f78d8",
+
+"#8c6dd7",
+"#b26cd6",
+"#d86ba8",
+"#888888",
+
+"#607d8b",
+"#795548",
+"#546e7a",
+"#9e9e9e"
+
+];
+
+let dayRange = 7;
+
+let currentPage = 0;
+
+let pages = [
+
+{
+  title:"跑步",
+  projects:[
+    {name:"开始跑步",color:"#5b8bd9"},
+    {name:"跑步结束",color:"#d96c6c"},
+  ]
+},
+
+{
+  title:"气功",
+  projects:[
+    {name:"气功开始",color:"#8c6dd7"},
+    {name:"气功结束",color:"#5ca879"},
+  ]
+}
+
+];
+
+let records = [];
+
+let selectedDate = null;
+let calendarOpen = false;
+
+// IndexedDB存储
+let db = null;
+const DB_NAME = "notaco_db";
+const DB_VERSION = 1;
+const STORE_NAME = "data";
+
+function initDB(){
+  return new Promise((resolve, reject)=>{
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+    request.onerror = ()=>reject(request.error);
+
+    request.onsuccess = ()=>{
+      db = request.result;
+      resolve(db);
+    };
+
+    request.onupgradeneeded = (e)=>{
+      const database = e.target.result;
+      if(!database.objectStoreNames.contains(STORE_NAME)){
+        database.createObjectStore(STORE_NAME);
+      }
+    };
+  });
+}
+
+async function saveToDB(){
+  if(!db) return;
+  const tx = db.transaction(STORE_NAME, "readwrite");
+  const store = tx.objectStore(STORE_NAME);
+  store.put({pages, records}, "appData");
+}
+
+async function loadFromDB(){
+  if(!db) return false;
+  return new Promise((resolve)=>{
+    const tx = db.transaction(STORE_NAME, "readonly");
+    const store = tx.objectStore(STORE_NAME);
+    const request = store.get("appData");
+    request.onsuccess = ()=>{
+      const data = request.result;
+      if(data && data.pages && Array.isArray(data.pages) && data.pages.length > 0){
+        const validPages = data.pages.filter(p => p && p.title && p.title.trim() !== "");
+        if(validPages.length > 0){
+          pages = validPages;
+          records = data.records || [];
+          resolve(true);
+          return;
+        }
+      }
+      resolve(false);
+    };
+    request.onerror = ()=>resolve(false);
+  });
+}
+
+// 加载数据
+async function loadData(){
+  try{
+    await initDB();
+    const loaded = await loadFromDB();
+    if(loaded) return;
+  }catch(e){}
+
+  let hasLocalData = false;
+  try{
+    const saved = localStorage.getItem("notaco_pages");
+    if(saved && saved.trim() !== "") {
+      const parsed = JSON.parse(saved);
+      if(Array.isArray(parsed) && parsed.length > 0){
+        const validPages = parsed.filter(p => p && p.title && p.title.trim() !== "");
+        if(validPages.length > 0){
+          pages = validPages;
+          hasLocalData = true;
+        }
+      }
+    }
+  }catch(e){}
+
+  try{
+    const saved = localStorage.getItem("notaco_records");
+    if(saved && saved.trim() !== "") {
+      const parsed = JSON.parse(saved);
+      if(Array.isArray(parsed)) {
+        records = parsed;
+      }
+    }
+  }catch(e){}
+
+  if(!hasLocalData){
+    pages = [
+      {
+        title:"跑步",
+        projects:[
+          {name:"开始跑步",color:"#5b8bd9"},
+          {name:"跑步结束",color:"#d96c6c"},
+        ]
+      },
+      {
+        title:"气功",
+        projects:[
+          {name:"气功开始",color:"#8c6dd7"},
+          {name:"气功结束",color:"#5ca879"},
+        ]
+      }
+    ];
+  }
+}
+
+// 保存数据
+async function saveData(){
+  try{
+    await saveToDB();
+  }catch(e){}
+
+  try{
+    localStorage.setItem("notaco_pages", JSON.stringify(pages));
+    localStorage.setItem("notaco_records", JSON.stringify(records));
+  }catch(e){}
+}
+
+// =====================
+// 离线保存功能
+// =====================
+
+function showToast(message, duration = 3000){
+  const toast = document.getElementById('cacheToast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, duration);
+}
+
+async function saveToLocal(){
+  showToast('正在准备离线版本...');
+  
+  try {
+    const response = await fetch(window.location.href);
+    let html = await response.text();
+    
+    const swRegisterCode = `
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').then(reg => {
+    console.log('Service Worker registered');
+  }).catch(err => {
+    console.log('SW registration failed:', err);
+  });
+}
+<\/script>`;
+    
+    html = html.replace('</body>', swRegisterCode + '</body>');
+    
+    const blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'NOTACO-离线版.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showToast('✅ 保存成功！下载后即可离线使用', 5000);
+    
+    registerServiceWorker();
+    
+  } catch (error) {
+    console.error('Save failed:', error);
+    showToast('保存失败，请重试');
+  }
+}
+
+async function registerServiceWorker(){
+  if ('serviceWorker' in navigator) {
+    try {
+      const registration = await navigator.serviceWorker.register('sw.js');
+      console.log('Service Worker registered:', registration.scope);
+      
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            showToast('有新版本可用，请刷新页面', 5000);
+          }
+        });
+      });
+    } catch (error) {
+      console.log('Service Worker registration failed:', error);
+    }
+  }
+}
+
+function showOfflineHelp(){
+  document.getElementById('helpModal').style.display = 'flex';
+}
+
+function updateOnlineStatus(){
+  const banner = document.getElementById('offlineBanner');
+  if (!navigator.onLine) {
+    banner.classList.add('show');
+  } else {
+    banner.classList.remove('show');
+  }
+}
+
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+
+// 获取当前页面有记录的日期集合
+function getDatesWithRecords(){
+  const currentTitle = pages[currentPage].title;
+  const filtered = records.filter(r=>r.page===currentTitle);
+  return new Set(filtered.map(r => r.time.split(" ")[0]));
+}
+
+function renderCalendar(datesWithRecords = new Set()){
+
+  const panel = document.getElementById("calendarPanel");
+
+  const now = new Date();
+
+  const year = now.getFullYear();
+
+  const month = now.getMonth();
+
+  const today = new Date();
+
+  const firstDay = new Date(year,month,1);
+
+  const lastDay = new Date(year,month+1,0);
+
+  const startPad = firstDay.getDay();
+
+  const totalDays = lastDay.getDate();
+
+  let html = `
+    <div class="calendar-grid">
+      <div class="calendar-weekday">日</div>
+      <div class="calendar-weekday">一</div>
+      <div class="calendar-weekday">二</div>
+      <div class="calendar-weekday">三</div>
+      <div class="calendar-weekday">四</div>
+      <div class="calendar-weekday">五</div>
+      <div class="calendar-weekday">六</div>
+  `;
+
+  for(let i=0;i<startPad;i++){
+    html += '<div class="calendar-day empty"></div>';
+  }
+
+  for(let d=1;d<=totalDays;d++){
+
+    const dateStr = `${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+
+    const isToday =
+      d===today.getDate() &&
+      month===today.getMonth() &&
+      year===today.getFullYear();
+
+    const isSelected = selectedDate===dateStr;
+    
+    // 检查这个日期是否有记录
+    const hasRecord = datesWithRecords.has(dateStr);
+
+    html += `
+      <div class="calendar-day ${isToday?"today":""} ${isSelected?"selected":""} ${hasRecord?"has-record":""}"
+      onclick="selectDate('${dateStr}')">
+        ${d}
+      </div>
+    `;
+
+  }
+
+  html += '</div>';
+
+  panel.innerHTML = html;
+
+}
+
+function toggleCalendar(){
+
+  calendarOpen = !calendarOpen;
+
+  const arrow = document.querySelector(".calendar-arrow");
+
+  const panel = document.getElementById("calendarPanel");
+
+  if(calendarOpen){
+    arrow.classList.add("open");
+    panel.classList.add("show");
+  }
+  else{
+    arrow.classList.remove("open");
+    panel.classList.remove("show");
+  }
+
+}
+
+function selectDate(dateStr){
+
+  selectedDate = dateStr;
+  
+  const datesWithRecords = getDatesWithRecords();
+  renderCalendar(datesWithRecords);
+
+  renderTimeline();
+
+}
+
+function renderTabs(){
+
+  const tabs = document.getElementById("tabs");
+
+  tabs.innerHTML = "";
+
+  pages.forEach((page,index)=>{
+
+    const btn = document.createElement("button");
+
+    btn.className =
+    "tab" + (index===currentPage ? " active":"");
+
+    btn.innerText = page.title;
+
+    btn.onclick = ()=>{
+
+      currentPage = index;
+
+      renderTabs();
+      renderProjects();
+      renderTimeline();
+
+    };
+
+    tabs.appendChild(btn);
+
+  });
+
+  // 添加页面按钮
+  const addBtn = document.createElement("button");
+  addBtn.className = "tab add-page";
+  addBtn.innerText = "+";
+  addBtn.onclick = addPage;
+  tabs.appendChild(addBtn);
+
+  // 删除页面按钮
+  const deleteBtn = document.createElement("button");
+  deleteBtn.className = "tab delete-page";
+  deleteBtn.innerText = "🗑";
+  deleteBtn.title = "删除当前页面";
+  deleteBtn.onclick = deletePage;
+  tabs.appendChild(deleteBtn);
+
+}
+
+function renderProjects(){
+
+  const grid = document.getElementById("projectGrid");
+
+  grid.innerHTML = "";
+
+  const page = pages[currentPage];
+
+  page.projects.forEach((project,index)=>{
+
+    const btn = document.createElement("button");
+
+    btn.className = "project";
+
+    btn.style.background = project.color;
+
+    btn.innerHTML = `
+      ${project.name}
+
+      <button class="del-project"
+      onclick="event.stopPropagation();
+      deleteProject(${index})">
+        ×
+      </button>
+    `;
+
+    btn.onclick = ()=>addRecord(project);
+
+    grid.appendChild(btn);
+
+  });
+
+}
+
+function addRecord(project){
+
+  const now = new Date();
+
+  records.push({
+
+    page:pages[currentPage].title,
+    text:project.name,
+    color:project.color,
+    time:formatDateTime(now),
+    index:Date.now()
+
+  });
+
+  saveData();
+  renderTimeline();
+
+}
+
+function renderTimeline(){
+
+  const box = document.getElementById("timeline");
+
+  // 获取有记录的日期
+  const datesWithRecords = getDatesWithRecords();
+  
+  box.innerHTML = `
+    <div class="calendar-toggle" onclick="toggleCalendar()">
+      <span class="calendar-arrow ${calendarOpen?'open':''}">▼</span>
+      <span>选择日期</span>
+    </div>
+    <div class="calendar-panel ${calendarOpen?'show':''}" id="calendarPanel"></div>
+  `;
+
+  renderCalendar(datesWithRecords);
+
+  const currentTitle = pages[currentPage].title;
+
+  // 获取当前页面的所有记录
+  let filtered = records.filter(r=>r.page===currentTitle);
+
+  // 获取所有有记录的日期（去重并排序）
+  const allDays = [...new Set(filtered.map(r => r.time.split(" ")[0]))].sort();
+
+  // 计算要显示的日期范围 - 始终尝试显示3天
+  let displayDays = [];
+
+  if (selectedDate) {
+    // 有选择日期时
+    const selectedIndex = allDays.indexOf(selectedDate);
+    
+    if (selectedIndex === -1) {
+      // 选择日期没有记录 - 找前后有记录的日期填满3列
+      const prevDays = allDays.filter(d => d < selectedDate);
+      const nextDays = allDays.filter(d => d > selectedDate);
+      
+      displayDays = [];
+      
+      if (prevDays.length >= 2) {
+        displayDays.push(prevDays[prevDays.length - 2]);
+        displayDays.push(prevDays[prevDays.length - 1]);
+        if (nextDays.length > 0) {
+          displayDays.push(nextDays[0]);
+        }
+      } else if (prevDays.length === 1) {
+        displayDays.push(prevDays[0]);
+        if (nextDays.length >= 2) {
+          displayDays.push(nextDays[0]);
+          displayDays.push(nextDays[1]);
+        } else if (nextDays.length === 1) {
+          displayDays.push(nextDays[0]);
+          if (displayDays.length < 3 && prevDays.length > 0) {
+            displayDays.unshift(prevDays[0]);
+          }
+          if (displayDays.length < 3) {
+            const morePrev = allDays.filter(d => d < displayDays[0]);
+            if (morePrev.length > 0) {
+              displayDays.unshift(morePrev[morePrev.length - 1]);
+            }
+          }
+        } else {
+          if (allDays.length >= 3) {
+            displayDays = allDays.slice(-3);
+          } else {
+            displayDays = [...allDays];
+          }
+        }
+      } else {
+        if (nextDays.length >= 3) {
+          displayDays = nextDays.slice(0, 3);
+        } else if (nextDays.length > 0) {
+          displayDays = nextDays.slice(0, Math.min(3, nextDays.length));
+          if (displayDays.length < 3) {
+            const morePrev = allDays.filter(d => d < displayDays[0]);
+            const needed = 3 - displayDays.length;
+            for (let i = morePrev.length - needed; i < morePrev.length && displayDays.length < 3; i++) {
+              if (i >= 0) displayDays.unshift(morePrev[i]);
+            }
+          }
+        }
+      }
+      
+    } else {
+      // 选择日期有记录
+      displayDays = [];
+      
+      const start = Math.max(0, selectedIndex - 1);
+      const end = Math.min(allDays.length - 1, selectedIndex + 1);
+      
+      let actualStart = start;
+      let actualEnd = end;
+      
+      if (actualEnd - actualStart < 2) {
+        while (actualEnd - actualStart < 2 && actualStart > 0) {
+          actualStart--;
+        }
+        while (actualEnd - actualStart < 2 && actualEnd < allDays.length - 1) {
+          actualEnd++;
+        }
+      }
+      
+      for (let i = actualStart; i <= actualEnd && displayDays.length < 3; i++) {
+        if (!displayDays.includes(allDays[i])) {
+          displayDays.push(allDays[i]);
+        }
+      }
+    }
+    
+  } else {
+    // 没有选择日期 - 显示最近的3天
+    if (allDays.length >= 3) {
+      displayDays = allDays.slice(-3);
+    } else {
+      displayDays = [...allDays];
+    }
+  }
+
+  // 去重并确保按顺序
+  displayDays = [...new Set(displayDays)].sort();
+
+  // 限制最多3天
+  displayDays = displayDays.slice(0, 3);
+
+  // 如果没有要显示的日期
+  if (displayDays.length === 0) {
+    const noData = document.createElement("div");
+    noData.style.cssText = "text-align:center;color:#999;padding:20px;";
+    noData.innerText = "还没有记录，点击标签开始记录";
+    box.appendChild(noData);
+    return;
+  }
+
+  // 过滤出要显示的记录
+  const displayRecords = filtered.filter(r => displayDays.includes(r.time.split(" ")[0]));
+
+  // 添加提示信息
+  const hint = document.createElement("div");
+  hint.className = "all-records-hint";
+  if (selectedDate) {
+    hint.innerText = `📅 显示 ${displayDays.length} 天`;
+  } else {
+    hint.innerText = `📅 最近 ${displayDays.length} 天`;
+  }
+  box.appendChild(hint);
+
+  const grouped = {};
+
+  displayRecords.forEach(r=>{
+    const day = r.time.split(" ")[0];
+    if(!grouped[day]){
+      grouped[day] = [];
+    }
+    grouped[day].push(r);
+  });
+
+  // 固定3列布局
+  const columnsContainer = document.createElement("div");
+  columnsContainer.className = "columns-container";
+
+  displayDays.forEach((day, dayIndex)=>{
+
+    const section = document.createElement("div");
+    section.className = "day-section";
+
+    const header = document.createElement("div");
+    header.className = "day-header";
+    header.innerText = formatDay(day);
+    section.appendChild(header);
+
+    const items = grouped[day] || [];
+
+    items.forEach((item, index)=>{
+
+      // 跨天间隔
+      if (dayIndex > 0 && index === 0) {
+        const prevDay = displayDays[dayIndex - 1];
+        const prevItems = grouped[prevDay] || [];
+        if (prevItems.length > 0) {
+          const lastPrevItem = prevItems[prevItems.length - 1];
+          const gapMin = diffMinutes(lastPrevItem.time, item.time);
+          
+          const gap = document.createElement("div");
+          gap.className = "gap-cross-day";
+          gap.innerText = "📆 " + formatGap(gapMin);
+          section.appendChild(gap);
+        }
+      }
+
+      const row = document.createElement("div");
+      row.className = "item";
+
+      row.innerHTML = `
+        <div class="dot" style="color:${item.color};"></div>
+        <div class="content">
+          <div class="time-wrap">
+            <span class="time">${item.time.split(" ")[1]}</span>
+            <button class="del-record"
+            onclick="deleteRecord(${item.index})">×</button>
+          </div>
+          <div class="tag-btn" style="background:${item.color};">
+            ${item.text}
+          </div>
+        </div>
+      `;
+
+      section.appendChild(row);
+
+      // 同天内项目之间的间隔
+      if (index < items.length - 1) {
+        const gapMin = diffMinutes(items[index].time, items[index + 1].time);
+        const gap = document.createElement("div");
+        gap.className = "gap";
+        gap.innerText = "▲ " + formatGap(gapMin);
+        section.appendChild(gap);
+      }
+
+    });
+
+    columnsContainer.appendChild(section);
+
+  });
+
+  box.appendChild(columnsContainer);
+
+}
+
+function addPage(){
+
+  const title = prompt("页面标题");
+
+  if(!title) return;
+
+  pages.push({
+
+    title,
+    projects:[]
+
+  });
+
+  currentPage = pages.length - 1;
+
+  saveData();
+  renderTabs();
+  renderProjects();
+  renderTimeline();
+
+}
+
+function deletePage(){
+
+  if(pages.length <= 1){
+
+    alert("至少保留一个页面");
+
+    return;
+
+  }
+
+  if(confirm("确定删除当前页面？")){
+
+    const title = pages[currentPage].title;
+
+    pages.splice(currentPage,1);
+
+    records =
+    records.filter(r=>r.page!==title);
+
+    currentPage = 0;
+
+    saveData();
+    renderTabs();
+    renderProjects();
+    renderTimeline();
+
+  }
+
+}
+
+function addProject(){
+
+  const name = prompt("输入标签名称");
+
+  if(!name) return;
+
+  let color = "";
+
+  let html = `
+
+    <div id="colorPanel"
+    style="
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.45);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      z-index:9999;
+    ">
+
+      <div style="
+        width:320px;
+        background:white;
+        border-radius:24px;
+        padding:20px;
+      ">
+
+        <div style="
+          font-size:22px;
+          font-weight:800;
+          margin-bottom:16px;
+        ">
+          选择颜色
+        </div>
+
+        <div class="color-picker">
+  `;
+
+  presetColors.forEach(c=>{
+
+    html += `
+      <div
+      class="color-item"
+      data-color="${c}"
+      style="background:${c};">
+      </div>
+    `;
+
+  });
+
+  html += `
+
+        </div>
+
+        <button id="okColor"
+        style="
+          margin-top:20px;
+          width:100%;
+          height:52px;
+          border:none;
+          border-radius:16px;
+          background:#2d2d32;
+          color:white;
+          font-size:16px;
+          font-weight:700;
+          cursor:pointer;
+        ">
+          确认
+        </button>
+
+      </div>
+
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML("beforeend",html);
+
+  const items =
+  document.querySelectorAll(".color-item");
+
+  items.forEach(item=>{
+
+    item.onclick = ()=>{
+
+      items.forEach(i=>
+        i.classList.remove("active")
+      );
+
+      item.classList.add("active");
+
+      color = item.dataset.color;
+
+    };
+
+  });
+
+  document.getElementById("okColor").onclick =
+  ()=>{
+
+    if(!color){
+
+      const randomDefault = [
+
+        "#d9b44a",
+        "#d96c6c",
+        "#5b8bd9"
+
+      ];
+
+      color =
+      randomDefault[
+        Math.floor(Math.random()*3)
+      ];
+
+    }
+
+    pages[currentPage].projects.push({
+
+      name,
+      color
+
+    });
+
+    document
+    .getElementById("colorPanel")
+    .remove();
+
+    saveData();
+    renderProjects();
+
+  };
+
+}
+
+function deleteProject(index){
+
+  if(confirm("删除标签？")){
+
+    pages[currentPage]
+    .projects.splice(index,1);
+
+    saveData();
+    renderProjects();
+
+  }
+
+}
+
+function deleteRecord(index){
+
+  records = records.filter(r=>r.index !== index);
+
+  saveData();
+  renderTimeline();
+
+}
+
+function changeDay(num){
+
+  dayRange += num;
+
+  if(dayRange < 1){
+    dayRange = 1;
+  }
+
+  document.getElementById("dayCount")
+  .innerText = dayRange;
+
+}
+
+function diffMinutes(a,b){
+
+  const t1 =
+  new Date(a.replace(/-/g,"/"));
+
+  const t2 =
+  new Date(b.replace(/-/g,"/"));
+
+  return Math.abs((t1-t2)/1000/60);
+
+}
+
+function formatGap(min){
+
+  const d = Math.floor(min / 1440);
+
+  const h =
+  Math.floor((min % 1440)/60);
+
+  const m = Math.floor(min % 60);
+
+  let str = "";
+
+  if(d) str += d + "天";
+
+  if(h) str += h + "小时";
+
+  str += m + "分钟";
+
+  return str;
+
+}
+
+function formatDateTime(date){
+
+  const y = date.getFullYear();
+
+  const m =
+  String(date.getMonth()+1)
+  .padStart(2,"0");
+
+  const d =
+  String(date.getDate())
+  .padStart(2,"0");
+
+  const h =
+  String(date.getHours())
+  .padStart(2,"0");
+
+  const mi =
+  String(date.getMinutes())
+  .padStart(2,"0");
+
+  return `${y}-${m}-${d} ${h}:${mi}`;
+
+}
+
+function formatDay(str){
+
+  const date = new Date(str);
+
+  const arr = [
+
+    "周日",
+    "周一",
+    "周二",
+    "周三",
+    "周四",
+    "周五",
+    "周六"
+
+  ];
+
+  return `
+    ${date.getMonth()+1}月${date.getDate()}日
+    ${arr[date.getDay()]}
+  `;
+
+}
+
+function openSettings(){
+
+  document.getElementById("modal")
+  .style.display = "flex";
+
+}
+
+function closeSettings(){
+
+  document.getElementById("modal")
+  .style.display = "none";
+
+}
+
+function exportData(){
+
+  const data = {
+
+    pages,
+    records
+
+  };
+
+  const blob = new Blob(
+
+    [JSON.stringify(data)],
+
+    {type:"application/json"}
+
+  );
+
+  const a = document.createElement("a");
+
+  a.href = URL.createObjectURL(blob);
+
+  const filename = prompt(
+
+    "导出文件名",
+
+    "notaco-data.json"
+
+  );
+
+  a.download =
+  filename || "notaco-data.json";
+
+  a.click();
+
+}
+
+document
+.getElementById("importFile")
+.addEventListener("change",function(e){
+
+  const file = e.target.files[0];
+
+  if(!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(){
+
+    try{
+
+      const data = JSON.parse(reader.result);
+
+      pages = data.pages || [];
+
+      records = data.records || [];
+
+      currentPage = 0;
+
+      renderTabs();
+      renderProjects();
+      renderTimeline();
+
+      alert("导入成功");
+
+    }
+
+    catch{
+
+      alert("文件错误");
+
+    }
+
+  };
+
+  reader.readAsText(file);
+
+});
+
+loadData().then(()=>{
+  renderTabs();
+  renderProjects();
+  renderTimeline();
+  
+  updateOnlineStatus();
+  
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      console.log('Service Worker registered');
+    }).catch(err => {
+      console.log('SW registration failed:', err);
+    });
+  }
+});
+
+</script>
+
+
+<style>
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.inland-security-footer {
+  position: fixed;
+  z-index: 10;
+  bottom: 0;
+  right: 0;
+  width: fit-content;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tooltip-container {
+  position: relative;
+}
+
+.trigger-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background-color: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.minimax-link {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 300;
+  color: #adadad;
+  text-decoration: none;
+}
+
+.minimax-link:visited {
+  color: #adadad;
+}
+
+.minimax-link:hover {
+  color: #666666;
+}
+
+.tooltip-content {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  padding-bottom: 16px;
+  font-size: 12px;
+  line-height: 17px;
+  background-color: #fafafa;
+  border-radius: 12px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  color: #171717;
+}
+
+.tooltip-content::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  height: 16px;
+}
+
+.tooltip-container:hover .tooltip-content {
+  display: flex;
+}
+
+.info-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.beian-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #171717;
+}
+
+.beian-icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 2px;
+}
+
+.underline-text {
+  color: #171717;
+  text-decoration: underline;
+}
+
+.underline-text:hover {
+  color: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+  .trigger-content {
+    background-color: transparent;
+  }
+
+  .minimax-link,
+  .minimax-link:visited {
+    color: #666666;
+  }
+
+  .minimax-link:hover {
+    color: #adadad;
+  }
+
+  .tooltip-content {
+    background-color: #262626;
+    color: #ededed;
+  }
+
+  .beian-link,
+  .underline-text {
+    color: #ededed;
+  }
+
+  .underline-text:hover {
+    color: #ffffff;
+  }
+}
+
+</style>
+<div class="inland-security-footer">
+  <div class="tooltip-container">
+    <div class="trigger-content">
+      <a href="https://www.minimaxi.com/" target="_blank" rel="noreferrer" class="minimax-link">
+        <span>© 2026 MiniMax</span>
+      </a>
+    </div>
+    <div class="tooltip-content">
+      <section class="info-section">
+        <span>上海稀宇科技有限公司</span>
+      </section>
+
+      <section class="info-section">
+        <a class="beian-link" href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31010402010179" target="_blank" rel="noreferrer">
+          <img alt="hailuo-beian-icon" src="https://cdn.hailuoai.com/hailuo-video-web/public_assets/223037d3-79fd-4db0-a456-749f38a6a14b.png" class="beian-icon">
+          <span class="underline-text">沪公网安备31010402010179号</span>
+        </a>
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer" class="underline-text">
+          沪ICP备2023003282号-38
+        </a>
+      </section>
+
+      <section class="info-section">
+        <span>模型名称：MiniMax</span>
+        <span>备案号：Shanghai-MiniMax-202505230046</span>
+      </section>
+
+      <section class="info-section">
+        <a href="https://agent.minimaxi.com/doc/zh/terms-of-service.html" target="_blank" rel="noreferrer" class="underline-text">
+          用户协议
+        </a>
+        <a href="https://agent.minimaxi.com/doc/zh/privacy-policy.html" target="_blank" rel="noreferrer" class="underline-text">
+          隐私政策
+        </a>
+      </section>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
